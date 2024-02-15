@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/net/html"
 )
@@ -93,6 +94,35 @@ func ProcessURLs(urls []models.LeroymerlinURL) {
 
 		dateSubmit := FindSubmissionDates(doc)
 		fmt.Println("dateSubmit: ", dateSubmit)
+
+		if len(dateSubmit) > 0 {
+			// Votre date en string
+			dateString := dateSubmit[0]
+
+			// Supprimer le "Le " du début
+			dateString = dateString[3:]
+
+			// Définir le layout pour correspondre à votre date
+			layout := "02 jan. 2006"
+
+			// Utiliser time.Parse pour convertir la string en time.Time
+			t, err := time.Parse(layout, dateString)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			// Obtenir la date actuelle
+			now := time.Now()
+
+			// Comparer les deux dates
+			if t.After(now) {
+				fmt.Println("La date est dans le futur")
+			} else if t.Before(now) {
+				fmt.Println("La date est dans le passé")
+			} else {
+				fmt.Println("La date est aujourd'hui")
+			}
+		}
 	}
 }
 
